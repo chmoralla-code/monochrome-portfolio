@@ -8,7 +8,7 @@ A premium, minimalist architectural portfolio with a full-featured admin dashboa
 - **Image Uploads**: Direct image uploads to Supabase Storage from the admin panel.
 - **Custom Authentication**: Simple cookie-based auth (no complex Supabase Auth setup required).
 - **Responsive**: Fully optimized for desktop and mobile.
-- **Deploy Ready**: Configured for Vercel and Supabase deployment.
+- **Deploy Ready**: Configured for Render and Supabase deployment.
 
 ## Tech Stack
 - Next.js 16 (App Router)
@@ -64,22 +64,44 @@ npm run dev
 
 Visit `http://localhost:3000` for the portfolio and `http://localhost:3000/admin` for the dashboard.
 
-## Deployment to Vercel
+## Deployment to Render
 
-### Automatic Deployment
+### Option 1: Blueprint (render.yaml)
 1. Push your code to GitHub
-2. Connect your GitHub account to [Vercel](https://vercel.com/)
-3. Create a "New Project" and select this repository
-4. Add these Environment Variables in Vercel:
+2. In the Render Dashboard, click **New +** → **Blueprint**
+3. Connect your GitHub repo and select `monochrome-portfolio`
+4. Render will read `render.yaml` and configure the service automatically
+5. Add your environment variables in the Render dashboard:
    - `NEXT_PUBLIC_SUPABASE_URL` = `https://jhufojelzctorfycoohh.supabase.co`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = Your anon key
    - `SUPABASE_SERVICE_ROLE_KEY` = Your service role key
-5. Click **Deploy**
+6. Click **Apply** to deploy
 
-### Project Settings
-- **Framework Preset**: Next.js
-- **Build Command**: `next build`
-- **Output Directory**: `.next`
+### Option 2: Manual Web Service
+1. Push your code to GitHub
+2. In the Render Dashboard, click **New +** → **Web Service**
+3. Connect your GitHub repo and select `monochrome-portfolio`
+4. Configure:
+   - **Name**: `monochrome-portfolio`
+   - **Runtime**: `Node`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+5. Add Environment Variables:
+   - `NEXT_PUBLIC_SUPABASE_URL` = `https://jhufojelzctorfycoohh.supabase.co`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = Your anon key
+   - `SUPABASE_SERVICE_ROLE_KEY` = Your service role key
+6. Click **Create Web Service**
+
+### Your Existing Render Service
+If you already have a Render service at:
+`https://dashboard.render.com/web/srv-d7p07tu7r5hc73ah6bug/`
+
+1. Go to that service in your Render dashboard
+2. Check that it's connected to your GitHub repo
+3. Verify the build command is: `npm install && npm run build`
+4. Verify the start command is: `npm start`
+5. Add the environment variables listed above
+6. Push to the connected branch to trigger auto-deploy
 
 ## Database Schema
 
