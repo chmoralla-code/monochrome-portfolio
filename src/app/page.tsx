@@ -1,22 +1,14 @@
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar/Navbar';
 import Hero from '@/components/Hero/Hero';
+import ContactForm from '@/components/ContactForm/ContactForm';
 import styles from './page.module.css';
 
-export const revalidate = 0; // Disable caching for real-time updates
+export const revalidate = 0;
 
 export default async function Home() {
-  // Fetch Profile Data
-  const { data: profile } = await supabase
-    .from('profile')
-    .select('*')
-    .single();
-
-  // Fetch Projects Data
-  const { data: projects } = await supabase
-    .from('projects')
-    .select('*')
-    .order('order', { ascending: true });
+  const { data: profile } = await supabase.from('profile').select('*').single();
+  const { data: projects } = await supabase.from('projects').select('*').order('order', { ascending: true });
 
   const skills = [
     "PRECISION", "ORDER", "ENTROPY", "AXIOM", "FLUX", "RUST", "NEXT.JS", "TYPESCRIPT", 
@@ -26,6 +18,7 @@ export default async function Home() {
   return (
     <main className={styles.main}>
       <Navbar profileName={profile?.name || 'ARCH.STUDIO'} />
+      
       <Hero 
         title={profile?.philosophy || 'SYSTEM ARCHITECT'} 
         location={profile?.email || 'PHILIPPINES'} 
@@ -40,7 +33,7 @@ export default async function Home() {
         </div>
       </div>
 
-      <section className="container section-padding">
+      <section id="discipline" className="container section-padding">
         <span className="section-number">02 // DISCIPLINE</span>
         <div className={styles.philosophy}>
           {profile?.bio ? (
@@ -57,7 +50,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="container section-padding">
+      <section id="index" className="container section-padding">
         <span className="section-number">03 // INDEX</span>
         <div className={styles.projectHeader}>
           <h2>SELECTED WORKS</h2>
@@ -92,10 +85,21 @@ export default async function Home() {
         </div>
       </section>
 
+      <section id="initialize" className="container section-padding">
+        <span className="section-number">04 // INITIALIZE</span>
+        <div className={styles.contactSection}>
+          <div className={styles.contactIntro}>
+            <h2>START A PROJECT</h2>
+            <p>WE ARE CURRENTLY ACCEPTING NEW COMMISSIONS FOR 2026/2027.</p>
+          </div>
+          <ContactForm />
+        </div>
+      </section>
+
       <footer className={`${styles.footer} container section-padding`}>
         <div className={styles.footerGrid}>
           <div>
-            <span className="section-number">04 // CONNECT</span>
+            <span className="section-number">05 // CONNECT</span>
             <div className={styles.contactLinks}>
               <a href={`mailto:${profile?.email || 'admin@example.com'}`}>MAIL</a>
               <a href="#">GITHUB</a>

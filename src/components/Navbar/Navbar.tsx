@@ -17,9 +17,9 @@ export default function Navbar({ profileName }: NavbarProps) {
           {profileName.toUpperCase()}
         </Link>
         <ul className={styles.links}>
-          <li><Link href="/projects">INDEX</Link></li>
-          <li><Link href="/about">DISCIPLINE</Link></li>
-          <li><Link href="/contact">INITIALIZE</Link></li>
+          <li><Link href="#index">INDEX</Link></li>
+          <li><Link href="#discipline">DISCIPLINE</Link></li>
+          <li><Link href="#initialize">INITIALIZE</Link></li>
         </ul>
       </div>
     </nav>

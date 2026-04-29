@@ -1,11 +1,13 @@
 :root {
-  --background: #050505;
+  --background: #000000;
   --foreground: #ffffff;
-  --accent: #666666;
+  --accent: #ffffff;
   --gray-100: #111111;
   --gray-200: #222222;
-  --gray-300: #444444;
-  --gray-400: #888888;
+  --gray-300: #333333;
+  --gray-400: #777777;
+  --gray-500: #999999;
+  --gray-600: #bbbbbb;
   
   --spacing-xs: 0.5rem;
   --spacing-sm: 1rem;
@@ -15,6 +17,8 @@
   
   --font-mono: 'Space Mono', monospace;
   --font-sans: 'Inter', sans-serif;
+  
+  --border: 1px solid var(--gray-200);
 }
 
 * {
@@ -30,7 +34,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  line-height: 1.6;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -42,7 +46,7 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.03;
+  opacity: 0.04;
   z-index: 9999;
   pointer-events: none;
   background-image: url("https://grainy-gradients.vercel.app/noise.svg");
@@ -51,11 +55,11 @@ body::before {
 a {
   color: inherit;
   text-decoration: none;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 a:hover {
-  opacity: 0.5;
+  color: var(--gray-400);
 }
 
 button {
@@ -63,10 +67,15 @@ button {
   background: none;
   border: none;
   font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  opacity: 0.8;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 300;
+  font-weight: 700;
   letter-spacing: -0.04em;
   text-transform: uppercase;
 }
@@ -83,11 +92,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .section-number {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--accent);
+  font-size: 0.75rem;
+  color: var(--gray-500);
   margin-bottom: var(--spacing-sm);
   display: block;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.3em;
+  font-weight: 700;
 }
 
 /* Marquee Animation */
@@ -99,20 +109,36 @@ h1, h2, h3, h4, h5, h6 {
 .marquee {
   overflow: hidden;
   white-space: nowrap;
-  border-top: 1px solid var(--gray-200);
-  border-bottom: 1px solid var(--gray-200);
+  border-top: 1px solid var(--gray-300);
+  border-bottom: 1px solid var(--gray-300);
   padding: var(--spacing-sm) 0;
+  background: var(--gray-100);
 }
 
 .marquee-content {
   display: inline-block;
-  animation: scroll 20s linear infinite;
+  animation: scroll 30s linear infinite;
 }
 
 .marquee-content span {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   margin-right: var(--spacing-lg);
-  color: var(--gray-400);
+  color: #ffffff;
   text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
 }
