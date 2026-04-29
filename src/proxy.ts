@@ -54,16 +54,19 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+  // This will refresh session if expired - important for SSR
+  const { data: { session } } = await supabase.auth.getSession()
 
-  // Protected routes logic
-  if (!session && request.nextUrl.pathname.startsWith('/admin') && request.nextUrl.pathname !== '/admin/login') {
+  const isLoginPage = request.nextUrl.pathname === '/admin/login'
+  const isAdminPath = request.nextUrl.pathname.startsWith('/admin')
+
+  // If trying to access admin and no session, redirect to login
+  if (isAdminPath && !isLoginPage && !session) {
     return NextResponse.redirect(new URL('/admin/login', request.url))
   }
 
-  if (session && request.nextUrl.pathname === '/admin/login') {
+  // If logged in and on login page, redirect to dashboard
+  if (isLoginPage && session) {
     return NextResponse.redirect(new URL('/admin', request.url))
   }
 
