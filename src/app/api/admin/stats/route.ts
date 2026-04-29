@@ -22,21 +22,30 @@ export async function GET(request: Request) {
       supabase.from('messages').select('*', { count: 'exact', head: true })
     ]);
 
-    if (projectsError) throw projectsError;
-    if (messagesError) throw messagesError;
-    if (experienceError) throw experienceError;
-    if (allMessagesError) throw allMessagesError;
+    // Return default values if there are errors (graceful degradation)
+    const projects = projectsError ? 0 : (projectsCount || 0);
+    const unreadMessages = messagesError ? 0 : (messagesCount || 0);
+    const experience = experienceError ? 0 : (experienceCount || 0);
+    const totalMessages = allMessagesError ? 0 : (allMessagesCount || 0);
 
     return NextResponse.json({
-      projects: projectsCount || 0,
-      unreadMessages: messagesCount || 0,
-      totalMessages: allMessagesCount || 0,
-      experience: experienceCount || 0,
+      projects,
+      unreadMessages,
+      totalMessages,
+      experience,
+      hasErrors: !!(projectsError || messagesError || experienceError || allMessagesError)
     });
   } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message || 'Failed to fetch stats' },
-      { status: 500 }
-    );
+    console.error('Stats endpoint error:', err);
+    
+    // Return zeros instead of error to allow dashboard to load
+    return NextResponse.json({
+      projects: 0,
+      unreadMessages: 0,
+      totalMessages: 0,
+      experience: 0,
+      hasErrors: true,
+      errorMessage: err.message
+    });
   }
 }

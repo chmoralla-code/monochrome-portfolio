@@ -12,12 +12,20 @@ export default function ContactForm() {
     e.preventDefault();
     setStatus('loading');
     
+    // Check if Supabase is properly configured
+    if (!supabase) {
+      setStatus('error');
+      console.error('Supabase is not configured');
+      return;
+    }
+
     const { error } = await supabase
       .from('messages')
       .insert([formData]);
 
     if (error) {
       setStatus('error');
+      console.error('Error submitting form:', error);
     } else {
       setStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
