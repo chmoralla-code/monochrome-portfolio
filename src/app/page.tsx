@@ -1,8 +1,23 @@
+import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar/Navbar';
 import Hero from '@/components/Hero/Hero';
 import styles from './page.module.css';
 
-export default function Home() {
+export const revalidate = 0; // Disable caching for real-time updates
+
+export default async function Home() {
+  // Fetch Profile Data
+  const { data: profile } = await supabase
+    .from('profile')
+    .select('*')
+    .single();
+
+  // Fetch Projects Data
+  const { data: projects } = await supabase
+    .from('projects')
+    .select('*')
+    .order('order', { ascending: true });
+
   const skills = [
     "PRECISION", "ORDER", "ENTROPY", "AXIOM", "FLUX", "RUST", "NEXT.JS", "TYPESCRIPT", 
     "POSTGRESQL", "MINIMALISM", "BRUTALISM", "NEURAL INTERFACE", "SYSTEM ARCHITECT"
@@ -10,8 +25,12 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <Navbar />
-      <Hero />
+      <Navbar profileName={profile?.name || 'ARCH.STUDIO'} />
+      <Hero 
+        title={profile?.philosophy || 'SYSTEM ARCHITECT'} 
+        location={profile?.email || 'PHILIPPINES'} 
+        bio={profile?.bio || 'Architecture is the crystallization of thought.'}
+      />
       
       <div className="marquee">
         <div className="marquee-content">
@@ -24,9 +43,17 @@ export default function Home() {
       <section className="container section-padding">
         <span className="section-number">02 // DISCIPLINE</span>
         <div className={styles.philosophy}>
-          <p>Architecture is not just the construction of buildings.</p>
-          <p>It is the crystallization of thought into physical form.</p>
-          <p>We build systems that endure through precision and order.</p>
+          {profile?.bio ? (
+            profile.bio.split('\n').map((line: string, i: number) => (
+              <p key={i}>{line}</p>
+            ))
+          ) : (
+            <>
+              <p>Architecture is not just the construction of buildings.</p>
+              <p>It is the crystallization of thought into physical form.</p>
+              <p>We build systems that endure through precision and order.</p>
+            </>
+          )}
         </div>
       </section>
 
@@ -37,10 +64,31 @@ export default function Home() {
           <p>2022 — 2026</p>
         </div>
         <div className={styles.projectGrid}>
-          {/* This will be populated from Supabase */}
-          <div className={styles.emptyState}>
-            NO PROJECTS INITIALIZED. ACCESS ADMIN PANEL TO ADD CONTENT.
-          </div>
+          {projects && projects.length > 0 ? (
+            <div className={styles.grid}>
+              {projects.map((project: any) => (
+                <div key={project.id} className={styles.projectCard}>
+                  <div className={styles.projectMeta}>
+                    <span>{project.location}</span>
+                    <span>{project.year}</span>
+                  </div>
+                  <h3>{project.title}</h3>
+                  <p className={styles.projectCat}>{project.category}</p>
+                  <div className={styles.projectImage}>
+                    {project.thumbnail_url ? (
+                      <img src={project.thumbnail_url} alt={project.title} />
+                    ) : (
+                      <div className={styles.placeholder}>IMAGE_PENDING</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              NO PROJECTS INITIALIZED. ACCESS ADMIN PANEL TO ADD CONTENT.
+            </div>
+          )}
         </div>
       </section>
 
@@ -49,13 +97,13 @@ export default function Home() {
           <div>
             <span className="section-number">04 // CONNECT</span>
             <div className={styles.contactLinks}>
-              <a href="mailto:admin@example.com">MAIL</a>
+              <a href={`mailto:${profile?.email || 'admin@example.com'}`}>MAIL</a>
               <a href="#">GITHUB</a>
               <a href="#">LINKEDIN</a>
             </div>
           </div>
           <div className={styles.copyright}>
-            <p>© 2026 ARCH.STUDIO</p>
+            <p>© 2026 {profile?.name || 'ARCH.STUDIO'}</p>
             <p>DESIGNED FOR THE END OF ENTROPY</p>
           </div>
         </div>

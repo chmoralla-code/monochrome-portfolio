@@ -1,7 +1,11 @@
 import Link from 'next/link';
 import styles from './Navbar.module.css';
 
-export default function Navbar() {
+interface NavbarProps {
+  profileName: string;
+}
+
+export default function Navbar({ profileName }: NavbarProps) {
   return (
     <nav className={styles.nav}>
       <div className={`${styles.container} container`}>
@@ -10,7 +14,7 @@ export default function Navbar() {
           AVAILABLE FOR PROJECTS / 2026
         </div>
         <Link href="/" className={styles.logo}>
-          ARCH.STUDIO
+          {profileName.toUpperCase()}
         </Link>
         <ul className={styles.links}>
           <li><Link href="/projects">INDEX</Link></li>

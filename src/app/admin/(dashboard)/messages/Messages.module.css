@@ -1,0 +1,108 @@
+.container {
+  max-width: 900px;
+}
+
+.header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--spacing-xs);
+}
+
+.header p {
+  color: var(--gray-600);
+  font-size: 0.8rem;
+}
+
+.messageList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.messageCard {
+  background: white;
+  padding: var(--spacing-md);
+  border: 1px solid var(--gray-200);
+  transition: border-color 0.3s;
+}
+
+.unread {
+  border-left: 4px solid var(--foreground);
+}
+
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--gray-100);
+  padding-bottom: var(--spacing-sm);
+}
+
+.messageHeader h3 {
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.email {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  font-family: var(--font-mono);
+}
+
+.date {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--gray-400);
+}
+
+.messageBody {
+  margin-bottom: var(--spacing-md);
+}
+
+.subject {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gray-400);
+  margin-bottom: 0.5rem;
+}
+
+.content {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  border-top: 1px solid var(--gray-100);
+  padding-top: var(--spacing-sm);
+}
+
+.actions button {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.readBtn {
+  color: var(--foreground);
+}
+
+.deleteBtn {
+  color: #d32f2f;
+}
+
+.loading, .empty {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--gray-400);
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+}

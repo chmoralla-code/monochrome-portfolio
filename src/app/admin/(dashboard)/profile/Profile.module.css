@@ -1,0 +1,89 @@
+.container {
+  max-width: 800px;
+}
+
+.header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--spacing-xs);
+}
+
+.header p {
+  color: var(--gray-600);
+  font-size: 0.8rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  background: white;
+  padding: var(--spacing-lg);
+  border: 1px solid var(--gray-200);
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.inputGroup label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--gray-500);
+}
+
+.inputGroup input,
+.inputGroup textarea {
+  padding: var(--spacing-sm);
+  border: 1px solid var(--gray-200);
+  background: var(--gray-100);
+  outline: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.inputGroup input:focus,
+.inputGroup textarea:focus {
+  border-color: var(--foreground);
+}
+
+.saveButton {
+  background: var(--foreground);
+  color: var(--background);
+  padding: var(--spacing-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  margin-top: var(--spacing-sm);
+}
+
+.saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.success {
+  color: #2e7d32;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.loading {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+}

@@ -1,17 +1,23 @@
 import styles from './Hero.module.css';
 
-export default function Hero() {
+interface HeroProps {
+  title: string;
+  location: string;
+  bio: string;
+}
+
+export default function Hero({ title, location, bio }: HeroProps) {
   return (
     <section className={styles.hero}>
       <div className={`${styles.container} container`}>
         <div className={styles.intro}>
           <span className="section-number">01 // INITIALIZE</span>
           <h1 className={styles.title}>
-            SYSTEM<br />
-            <span>ARCHITECT</span>
+            {title.split(' ')[0]}<br />
+            <span>{title.split(' ').slice(1).join(' ') || 'ARCHITECT'}</span>
           </h1>
           <div className={styles.details}>
-            <p>BASED IN PHILIPPINES</p>
+            <p>BASED IN {location.toUpperCase()}</p>
             <p>SPECIALIZING IN MINIMALIST STRUCTURES</p>
           </div>
         </div>
@@ -28,7 +34,7 @@ export default function Hero() {
             </div>
             <div className={styles.sideItem}>
               <h3>CRAFT</h3>
-              <p>DIGITAL + PHYSICAL SPACE</p>
+              <p>{bio.substring(0, 30).toUpperCase()}...</p>
             </div>
           </div>
         </div>
