@@ -1,0 +1,73 @@
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--spacing-lg);
+  border: 1px solid var(--gray-200);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.inputGroup label {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+.inputGroup input {
+  padding: var(--spacing-sm);
+  border: 1px solid var(--gray-200);
+  background: var(--gray-100);
+  outline: none;
+  font-family: inherit;
+}
+
+.inputGroup input:focus {
+  border-color: var(--foreground);
+}
+
+.button {
+  background: var(--foreground);
+  color: var(--background);
+  padding: var(--spacing-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  margin-top: var(--spacing-sm);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #ff0000;
+  font-size: 0.8rem;
+  margin: 0;
+}
