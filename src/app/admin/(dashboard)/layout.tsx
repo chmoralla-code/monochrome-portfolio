@@ -1,5 +1,7 @@
 import Link from 'next/link';
+import LogoutButton from '@/components/LogoutButton/LogoutButton';
 import styles from './AdminLayout.module.css';
+
 
 export default function AdminLayout({
   children,
@@ -20,7 +22,9 @@ export default function AdminLayout({
           <Link href="/admin/messages">MESSAGES</Link>
           <div className={styles.spacer}></div>
           <Link href="/" className={styles.viewSite}>VIEW SITE</Link>
+          <LogoutButton />
         </nav>
+
       </aside>
       <main className={styles.content}>
         {children}

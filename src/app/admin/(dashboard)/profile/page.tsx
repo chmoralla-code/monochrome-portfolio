@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import styles from './Profile.module.css';
+
 
 export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
@@ -25,19 +25,17 @@ export default function ProfilePage() {
   async function fetchProfile() {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('profile')
-        .select('*')
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      if (data) {
+      const response = await fetch('/api/admin/profile');
+      if (!response.ok) throw new Error('Failed to fetch profile');
+      
+      const data = await response.json();
+      if (data && Object.keys(data).length > 0) {
         setProfile({
           name: data.name || '',
-          title: data.philosophy || '', // Using philosophy as the "SYSTEM ARCHITECT" title for now
+          title: data.philosophy || '',
           bio: data.bio || '',
           philosophy: data.philosophy || '',
-          location: data.email || '', // Reusing fields or I should update schema
+          location: data.email || '',
           email: data.email || '',
         });
       }
@@ -48,27 +46,29 @@ export default function ProfilePage() {
     }
   }
 
+
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     setMessage(null);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('No user found');
-
-      const { error } = await supabase
-        .from('profile')
-        .upsert({
-          id: user.id,
+      const response = await fetch('/api/admin/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           name: profile.name,
           bio: profile.bio,
           philosophy: profile.philosophy,
           email: profile.email,
-          updated_at: new Date().toISOString(),
-        });
+        }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save profile');
+      }
+
       setMessage({ type: 'success', text: 'Profile updated successfully' });
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message });
@@ -76,6 +76,7 @@ export default function ProfilePage() {
       setSaving(false);
     }
   }
+
 
   if (loading) return <div className={styles.loading}>LOADING PROFILE...</div>;
 

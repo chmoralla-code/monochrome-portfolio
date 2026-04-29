@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import styles from './Dashboard.module.css';
 import Link from 'next/link';
 
@@ -16,20 +15,14 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function fetchStats() {
       try {
-        const [
-          { count: projectsCount },
-          { count: messagesCount },
-          { count: experienceCount }
-        ] = await Promise.all([
-          supabase.from('projects').select('*', { count: 'exact', head: true }),
-          supabase.from('messages').select('*', { count: 'exact', head: true }).eq('is_read', false),
-          supabase.from('experience').select('*', { count: 'exact', head: true })
-        ]);
-
+        const response = await fetch('/api/admin/stats');
+        if (!response.ok) throw new Error('Failed to fetch stats');
+        
+        const data = await response.json();
         setStats({
-          projects: projectsCount || 0,
-          messages: messagesCount || 0,
-          experience: experienceCount || 0,
+          projects: data.projects || 0,
+          messages: data.unreadMessages || 0,
+          experience: data.experience || 0,
         });
       } catch (error) {
         console.error('Error fetching stats:', error);
@@ -40,6 +33,7 @@ export default function AdminDashboard() {
 
     fetchStats();
   }, []);
+
 
   return (
     <div className={styles.container}>

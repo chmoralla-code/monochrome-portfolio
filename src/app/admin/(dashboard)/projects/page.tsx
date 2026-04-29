@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import styles from './Projects.module.css';
+
 
 interface Project {
   id: string;
@@ -25,7 +25,11 @@ export default function ProjectsPage() {
     location: '',
     year: new Date().getFullYear(),
     category: '',
+    thumbnail_url: '',
   });
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+
 
   useEffect(() => {
     fetchProjects();
@@ -34,12 +38,10 @@ export default function ProjectsPage() {
   async function fetchProjects() {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('order', { ascending: true });
-
-      if (error) throw error;
+      const response = await fetch('/api/admin/projects');
+      if (!response.ok) throw new Error('Failed to fetch projects');
+      
+      const data = await response.json();
       setProjects(data || []);
     } catch (error: any) {
       alert(error.message);
@@ -48,52 +50,96 @@ export default function ProjectsPage() {
     }
   }
 
+
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
+    setUploading(true);
+    
     try {
-      const { error } = await supabase
-        .from('projects')
-        .upsert({
-          ...currentProject,
-          updated_at: new Date().toISOString(),
+      let thumbnailUrl = currentProject.thumbnail_url || '';
+
+      // Upload image if selected
+      if (selectedImage) {
+        const formData = new FormData();
+        formData.append('file', selectedImage);
+        
+        const uploadResponse = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData,
         });
 
-      if (error) throw error;
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json();
+          throw new Error(errorData.error || 'Failed to upload image');
+        }
+
+        const uploadData = await uploadResponse.json();
+        thumbnailUrl = uploadData.url;
+      }
+
+      const isUpdate = !!currentProject.id;
+      const projectData = {
+        ...currentProject,
+        thumbnail_url: thumbnailUrl,
+      };
+
+      const response = await fetch('/api/admin/projects', {
+        method: isUpdate ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(projectData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save project');
+      }
+
+      setSelectedImage(null);
       setIsEditing(false);
       fetchProjects();
     } catch (error: any) {
       alert(error.message);
+    } finally {
+      setUploading(false);
     }
   }
+
+
 
   async function handleDelete(id: string) {
     if (!confirm('Are you sure you want to delete this project?')) return;
     try {
-      const { error } = await supabase
-        .from('projects')
-        .delete()
-        .eq('id', id);
+      const response = await fetch(`/api/admin/projects?id=${id}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete project');
+      }
+
       fetchProjects();
     } catch (error: any) {
       alert(error.message);
     }
   }
+
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <h1>PROJECT MANAGEMENT</h1>
-        <button 
-          className={styles.addButton}
-          onClick={() => {
-            setCurrentProject({ title: '', description: '', location: '', year: new Date().getFullYear(), category: '' });
-            setIsEditing(true);
-          }}
-        >
-          ADD NEW PROJECT
-        </button>
+          <button 
+            className={styles.addButton}
+            onClick={() => {
+              setCurrentProject({ title: '', description: '', location: '', year: new Date().getFullYear(), category: '', thumbnail_url: '' });
+              setSelectedImage(null);
+              setIsEditing(true);
+            }}
+          >
+            ADD NEW PROJECT
+          </button>
+
       </header>
 
       {isEditing ? (
@@ -144,8 +190,35 @@ export default function ProjectsPage() {
                 rows={5}
               />
             </div>
+            <div className={styles.inputGroup}>
+              <label>PROJECT IMAGE</label>
+              <input 
+                type="file" 
+                accept="image/*"
+                onChange={e => {
+                  const file = e.target.files?.[0] || null;
+                  setSelectedImage(file);
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      setCurrentProject({...currentProject, thumbnail_url: event.target?.result as string});
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+              {currentProject.thumbnail_url && (
+                <div className={styles.imagePreview}>
+                  <img src={currentProject.thumbnail_url} alt="Preview" style={{ maxWidth: '200px', maxHeight: '150px', objectFit: 'cover', marginTop: '10px', border: '1px solid var(--gray-200)' }} />
+                </div>
+              )}
+            </div>
             <div className={styles.buttonGroup}>
-              <button type="submit" className={styles.saveButton}>SAVE PROJECT</button>
+
+              <button type="submit" className={styles.saveButton} disabled={uploading}>
+                {uploading ? 'SAVING...' : 'SAVE PROJECT'}
+              </button>
+
               <button type="button" onClick={() => setIsEditing(false)} className={styles.cancelButton}>CANCEL</button>
             </div>
           </form>

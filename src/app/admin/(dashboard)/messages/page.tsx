@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import styles from './Messages.module.css';
+
 
 interface Message {
   id: string;
@@ -25,12 +25,10 @@ export default function MessagesPage() {
   async function fetchMessages() {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      const response = await fetch('/api/admin/messages');
+      if (!response.ok) throw new Error('Failed to fetch messages');
+      
+      const data = await response.json();
       setMessages(data || []);
     } catch (error: any) {
       alert(error.message);
@@ -39,34 +37,45 @@ export default function MessagesPage() {
     }
   }
 
+
   async function markAsRead(id: string) {
     try {
-      const { error } = await supabase
-        .from('messages')
-        .update({ is_read: true })
-        .eq('id', id);
+      const response = await fetch('/api/admin/messages', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, is_read: true }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to mark as read');
+      }
+
       fetchMessages();
     } catch (error: any) {
       alert(error.message);
     }
   }
+
 
   async function deleteMessage(id: string) {
     if (!confirm('Delete this message?')) return;
     try {
-      const { error } = await supabase
-        .from('messages')
-        .delete()
-        .eq('id', id);
+      const response = await fetch(`/api/admin/messages?id=${id}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete message');
+      }
+
       fetchMessages();
     } catch (error: any) {
       alert(error.message);
     }
   }
+
 
   return (
     <div className={styles.container}>

@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import styles from './Login.module.css';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,21 +18,20 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-        throw new Error('Supabase environment variables are missing. Please check your Vercel settings.');
-      }
-
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
       });
 
-      if (error) {
-        setError(error.message);
-      } else {
-        router.push('/admin');
-        router.refresh();
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Invalid credentials');
       }
+
+      router.push('/admin');
+      router.refresh();
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred');
     } finally {
@@ -40,21 +39,23 @@ export default function LoginPage() {
     }
   };
 
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.loginCard}>
         <h1 className={styles.title}>ADMIN ACCESS</h1>
         <form onSubmit={handleLogin} className={styles.form}>
           <div className={styles.inputGroup}>
-            <label htmlFor="email">EMAIL</label>
+            <label htmlFor="username">USERNAME</label>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
+
           <div className={styles.inputGroup}>
             <label htmlFor="password">PASSWORD</label>
             <input

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import styles from './Experience.module.css';
+
 
 interface Experience {
   id: string;
@@ -31,12 +31,10 @@ export default function ExperiencePage() {
   async function fetchExperiences() {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('experience')
-        .select('*')
-        .order('order', { ascending: true });
-
-      if (error) throw error;
+      const response = await fetch('/api/admin/experience');
+      if (!response.ok) throw new Error('Failed to fetch experience');
+      
+      const data = await response.json();
       setExperiences(data || []);
     } catch (error: any) {
       alert(error.message);
@@ -45,17 +43,22 @@ export default function ExperiencePage() {
     }
   }
 
+
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     try {
-      const { error } = await supabase
-        .from('experience')
-        .upsert({
-          ...currentExp,
-          updated_at: new Date().toISOString(),
-        });
+      const isUpdate = !!currentExp.id;
+      const response = await fetch('/api/admin/experience', {
+        method: isUpdate ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(currentExp),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save experience');
+      }
+
       setIsEditing(false);
       fetchExperiences();
     } catch (error: any) {
@@ -63,20 +66,25 @@ export default function ExperiencePage() {
     }
   }
 
+
   async function handleDelete(id: string) {
     if (!confirm('Are you sure?')) return;
     try {
-      const { error } = await supabase
-        .from('experience')
-        .delete()
-        .eq('id', id);
+      const response = await fetch(`/api/admin/experience?id=${id}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete experience');
+      }
+
       fetchExperiences();
     } catch (error: any) {
       alert(error.message);
     }
   }
+
 
   return (
     <div className={styles.container}>

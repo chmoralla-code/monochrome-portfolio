@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { createServerClient } from '@/lib/supabase';
 import Navbar from '@/components/Navbar/Navbar';
 import Hero from '@/components/Hero/Hero';
 import ContactForm from '@/components/ContactForm/ContactForm';
@@ -7,6 +7,7 @@ import styles from './page.module.css';
 export const revalidate = 0;
 
 export default async function Home() {
+  const supabase = createServerClient();
   const { data: profile } = await supabase.from('profile').select('*').single();
   const { data: projects } = await supabase.from('projects').select('*').order('order', { ascending: true });
 
